@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { config } from './env.js';
 import { logger } from './logger.js';
 
-export const connectDatabase = async (): Promise<typeof mongoose> => {
+export const connectDatabase = async () => {
   try {
     mongoose.connection.on('connected', () => {
       logger.info('MongoDB connected successfully');
@@ -27,7 +27,7 @@ export const connectDatabase = async (): Promise<typeof mongoose> => {
   }
 };
 
-export const disconnectDatabase = async (): Promise<void> => {
+export const disconnectDatabase = async () => {
   try {
     await mongoose.connection.close();
     logger.info('MongoDB connection closed');
@@ -36,6 +36,6 @@ export const disconnectDatabase = async (): Promise<void> => {
   }
 };
 
-export const isDatabaseConnected = (): boolean => {
+export const isDatabaseConnected = () => {
   return mongoose.connection.readyState === 1;
 };
