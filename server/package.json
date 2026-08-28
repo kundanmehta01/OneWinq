@@ -1,15 +1,19 @@
 {
-  "name": "server",
+  "name": "onewinq-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "OneWinq Backend - Modular Monolith Platform",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/server.ts",
+    "build": "rimraf dist && tsc",
+    "start": "node dist/server.js",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "argon2": "^0.45.1",
     "cors": "^2.8.6",
