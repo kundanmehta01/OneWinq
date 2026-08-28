@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
 
-// Load environment variables from .env file
 dotenv.config();
 
 const envSchema = z.object({
@@ -17,23 +16,20 @@ const envSchema = z.object({
   ACCESS_TOKEN_EXPIRY: z.string().default('15m'),
   REFRESH_TOKEN_EXPIRY: z.string().default('7d'),
 
-  // Security & Networking
+  // Security
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
 
   // Logging
-  LOG_LEVEL: z
-    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
-    .default('info'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 
   // Storage
   STORAGE_PROVIDER: z.enum(['local', 's3', 'cloudinary']).default('local'),
   STORAGE_BUCKET: z.string().optional(),
 
-  // Redis (Optional for MVP)
+  // Redis (Optional)
   REDIS_URL: z.string().optional(),
 });
 
-// Parse and validate environment variables
 const parseEnv = () => {
   const result = envSchema.safeParse(process.env);
 
@@ -47,4 +43,3 @@ const parseEnv = () => {
 };
 
 export const config = parseEnv();
-export type Config = z.infer<typeof envSchema>;

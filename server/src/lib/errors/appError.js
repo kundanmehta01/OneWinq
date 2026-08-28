@@ -1,31 +1,21 @@
-export interface FieldError {
-  field?: string;
-  message: string;
-}
-
 export class AppError extends Error {
-  public readonly statusCode: number;
-  public readonly isOperational: boolean;
-  public readonly errors?: FieldError[];
-
-  constructor(message: string, statusCode = 500, errors?: FieldError[], isOperational = true) {
+  constructor(message, statusCode = 500, errors = undefined, isOperational = true) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
     this.errors = errors;
-    Object.setPrototypeOf(this, new.target.prototype);
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
 export class BadRequestError extends AppError {
-  constructor(message = 'Bad request', errors?: FieldError[]) {
+  constructor(message = 'Bad request', errors) {
     super(message, 400, errors);
   }
 }
 
 export class ValidationError extends AppError {
-  constructor(message = 'Validation failed', errors?: FieldError[]) {
+  constructor(message = 'Validation failed', errors) {
     super(message, 400, errors);
   }
 }
