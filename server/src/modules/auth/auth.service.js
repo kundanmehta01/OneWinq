@@ -11,6 +11,10 @@ import {
   NotFoundError,
 } from '../../lib/errors/appError.js';
 import { logger } from '../../config/logger.js';
+import { Profile } from '../profiles/profile.model.js';
+import { DigitalCard } from '../cards/card.model.js';
+import { generateSlug } from '../../utils/slug.js';
+
 
 export class AuthService {
   // 1. Register User (Requires verified OTP for Email or Phone)
@@ -63,6 +67,24 @@ export class AuthService {
       phoneVerified: !!phone,
       status: UserStatus.ACTIVE,
     });
+
+     //Auto-provision Digital Identity Profile & Digital Card
+    const baseSlug = email ? email.split('@')[0] : `user-${user._id.toString().slice(-6)}`;
+    const slug = generateSlug(baseSlug);
+    const profile = await Profile.create({
+      userId: user._id,
+      slug,
+      contact: {
+        email: user.email,
+        phone: user.phone,
+      },
+    });
+    await DigitalCard.create({
+      profileId: profile._id,
+      userId: user._id,
+      slug: profile.slug,
+    });
+
 
     // Generate JWT access & refresh tokens
     const tokens = await this._createSessionAndTokens(user._id, userAgent, ipAddress);
