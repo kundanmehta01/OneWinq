@@ -6,6 +6,7 @@ import { requestLogger } from './middleware/requestLogger.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { isDatabaseConnected } from './config/database.js';
+import { apiRoutes } from './routes/index.js';
 
 const createApp = () => {
   const app = express();
@@ -48,6 +49,8 @@ const createApp = () => {
       database: 'connected',
     });
   });
+
+  app.use('/api/v1', apiRoutes);
 
   // 404 & Global Error Handler
   app.use(notFoundHandler);
