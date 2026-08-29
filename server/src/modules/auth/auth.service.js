@@ -155,7 +155,6 @@ export class AuthService {
     });
 
     if (type === VerificationType.PASSWORD_RESET && !user) {
-      // Don't leak user existence on password reset, return generic message
       return { message: 'If an account exists, a verification code has been sent.' };
     }
 
@@ -172,11 +171,16 @@ export class AuthService {
       expiresAt,
     });
 
-    // In development, log the OTP for testing
+    // In development, log the OTP in terminal
     logger.info({ target: trimmedTarget, type, otp }, '🔑 Verification Code Generated');
 
-    return { message: `Verification code sent to ${trimmedTarget}` };
+    return {
+      message: `Verification code sent to ${trimmedTarget}`,
+      // 👇 In Development mode, return the OTP directly in the JSON response for easy Postman testing
+      ...(process.env.NODE_ENV !== 'production' && { devOtp: otp }),
+    };
   }
+
 
   // 6. Verify Code / OTP (Generic standalone verify endpoint)
   static async verifyCode({ target, code, type }) {
