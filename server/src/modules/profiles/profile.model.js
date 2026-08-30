@@ -148,4 +148,13 @@ const profileSchema = new mongoose.Schema(
 // Compound index for public profile discovery queries
 profileSchema.index({ visibility: 1, status: 1, createdAt: -1 });
 
+// Text index for fast multi-field keyword searching
+profileSchema.index({
+  displayName: 'text',
+  designation: 'text',
+  introduction: 'text',
+  skills: 'text',
+});
+
+
 export const Profile = mongoose.model('Profile', profileSchema);
