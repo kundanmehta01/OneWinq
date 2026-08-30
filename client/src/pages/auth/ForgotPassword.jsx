@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import AuthLayout from "../../components/auth/AuthLayout";
 import Input from "../../components/common/Input";
@@ -11,7 +12,7 @@ import { sendVerification } from "../../services/authService";
 const ForgotPassword = () => {
   const navigate = useNavigate();
 
-  const [target, setTarget] = useState("");
+  const [email, setEmail] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -24,39 +25,95 @@ const ForgotPassword = () => {
       setError("");
 
       await sendVerification({
-        target,
+        target: email,
 
         type: "PASSWORD_RESET",
       });
 
-      navigate("/reset-password", {
-        state: {
-          target,
-        },
-      });
-    } catch (err) {
-      setError(err.response?.data?.message || "Unable to send reset code");
+      localStorage.setItem(
+        "resetEmail",
+
+        email,
+      );
+
+      navigate("/reset-password");
+    } catch (error) {
+      console.log(error);
+
+      setError(error.response?.data?.message || "Failed to send OTP");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthLayout title="Forgot Password" subtitle="Reset your OneWinq password">
-      <div className="space-y-5">
+    <AuthLayout
+      title="Forgot Password"
+      subtitle="Reset your OneWinq account password"
+    >
+      <motion.div
+        initial={{
+          opacity: 0,
+
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+
+          y: 0,
+        }}
+        transition={{
+          duration: 0.4,
+        }}
+        className="
+space-y-6
+"
+      >
+        {/* Info Card */}
+
+        <div
+          className="
+bg-purple-50
+border
+border-purple-100
+rounded-xl
+p-4
+text-sm
+text-purple-700
+"
+        >
+          Enter your registered email address. We will send you a verification
+          code to reset your password.
+        </div>
+
         <ErrorMessage message={error} />
 
         <Input
-          label="Email or Phone"
-          placeholder="Enter email or phone"
-          value={target}
-          onChange={(e) => setTarget(e.target.value)}
+          label="Email Address"
+          name="email"
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <Button onClick={handleSendOTP} disabled={loading}>
-          {loading ? "Sending..." : "Send Reset Code"}
+          {loading ? "Sending OTP..." : "Send OTP"}
         </Button>
-      </div>
+
+        <button
+          type="button"
+          onClick={() => navigate("/login")}
+          className="
+w-full
+text-sm
+text-purple-600
+hover:underline
+"
+        >
+          Back to Login
+        </button>
+      </motion.div>
     </AuthLayout>
   );
 };

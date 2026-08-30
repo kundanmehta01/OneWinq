@@ -1,167 +1,179 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { verifyCode, registerUser } from "../../services/authService";
+import {  registerUser } from "../../services/authService";
 
 const VerifyOTP = () => {
+
   const navigate = useNavigate();
 
   const [otp, setOtp] = useState("");
-
   const [loading, setLoading] = useState(false);
 
-  const signupData = JSON.parse(localStorage.getItem("signupData"));
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleVerify = async (e) => {
 
-    if (!signupData) {
-      alert("Signup session expired");
+  e.preventDefault();
 
-      navigate("/signup");
+  try {
 
+    setLoading(true);
+
+    const signupData = JSON.parse(
+      localStorage.getItem("signupData")
+    );
+
+
+    if(!signupData){
+      alert("Signup data not found");
       return;
     }
 
-    try {
-      setLoading(true);
 
-      const target = signupData.email ? signupData.email : signupData.phone;
+    const response = await registerUser({
 
-      const type = signupData.type;
+      email: signupData.email || undefined,
 
-      // 1. Verify OTP
+      phone: signupData.phone || undefined,
 
-      await verifyCode({
-        target,
+      password: signupData.password,
 
-        code: otp,
+      verificationCode: otp,
 
-        type,
-      });
+    });
 
-      // 2. Create Account
 
-      const response = await registerUser({
-        email: signupData.email || undefined,
+    const {
+      accessToken,
+      refreshToken
+    } = response.data.tokens;
 
-        phone: signupData.phone || undefined,
 
-        password: signupData.password,
+    localStorage.setItem(
+      "accessToken",
+      accessToken
+    );
 
-        verificationCode: otp,
-      });
 
-      console.log(response);
+    localStorage.setItem(
+      "refreshToken",
+      refreshToken
+    );
 
-      const tokens = response.data.tokens;
 
-      localStorage.setItem(
-        "accessToken",
+    localStorage.removeItem("signupData");
 
-        tokens.accessToken,
-      );
 
-      localStorage.setItem(
-        "refreshToken",
+    navigate("/dashboard");
 
-        tokens.refreshToken,
-      );
 
-      localStorage.removeItem("signupData");
+  } catch(error){
 
-      navigate("/dashboard");
-    } catch (error) {
-      console.log(error);
+    console.log(error);
 
-      alert(error.response?.data?.message || "OTP verification failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+    alert(
+      error.response?.data?.message ||
+      "Registration failed"
+    );
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+};
 
   return (
-    <div
-      className="
-min-h-screen
-flex
-items-center
-justify-center
-bg-gradient-to-br
-from-purple-50
-via-white
-to-purple-100
-px-4
-"
-    >
-      <div
+
+    <div className="
+      min-h-screen 
+      flex 
+      items-center 
+      justify-center 
+      bg-gradient-to-br 
+      from-purple-50 
+      via-white 
+      to-purple-100
+    ">
+
+
+      <form
+        onSubmit={handleVerify}
         className="
-w-full
-max-w-md
-bg-white
-rounded-2xl
-shadow-xl
-p-8
-"
+          bg-white 
+          shadow-xl 
+          rounded-xl 
+          p-8 
+          w-full 
+          max-w-md
+        "
       >
-        <h1
-          className="
-text-3xl
-font-bold
-text-center
-mb-4
-"
-        >
+
+        <h1 className="
+          text-2xl 
+          font-bold 
+          text-center 
+          mb-6
+        ">
           Verify OTP
         </h1>
 
-        <p
+
+        <input
+
+          value={otp}
+
+          onChange={(e)=>setOtp(e.target.value)}
+
+          placeholder="Enter 6 digit OTP"
+
+          maxLength={6}
+
           className="
-text-center
-text-gray-500
-mb-6
-"
+            w-full
+            border
+            rounded-lg
+            p-3
+            text-center
+            text-xl
+            tracking-widest
+            mb-5
+          "
+
+        />
+
+
+        <button
+
+          disabled={loading}
+
+          className="
+            w-full
+            bg-purple-600
+            text-white
+            py-3
+            rounded-lg
+          "
+
         >
-          Enter the code sent to your email or phone
-        </p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            type="text"
-            value={otp}
-            maxLength={6}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder="Enter 6 digit OTP"
-            required
-            className="
-w-full
-border
-rounded-lg
-px-4
-py-3
-text-center
-text-xl
-tracking-widest
-"
-          />
+          {
+            loading 
+            ? "Verifying..." 
+            : "Verify OTP"
+          }
 
-          <button
-            disabled={loading}
-            className="
-w-full
-bg-purple-600
-text-white
-py-3
-rounded-lg
-hover:bg-purple-700
-"
-          >
-            {loading ? "Verifying..." : "Verify OTP"}
-          </button>
-        </form>
-      </div>
+        </button>
+
+
+      </form>
+
+
     </div>
+
   );
 };
+
 
 export default VerifyOTP;

@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import AuthLayout from "../../components/auth/AuthLayout";
-import Input from "../../components/common/Input";
-import Button from "../../components/common/Button";
-import PasswordInput from "../../components/auth/PasswordInput";
-import ErrorMessage from "../../components/common/ErrorMessage";
+import { motion } from "framer-motion";
 
 import { loginUser } from "../../services/authService";
+
 import useAuth from "../../hooks/useAuth";
 
 const Login = () => {
@@ -27,6 +23,7 @@ const Login = () => {
   const handleChange = (e) => {
     setForm({
       ...form,
+
       [e.target.name]: e.target.value,
     });
   };
@@ -34,6 +31,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       setLoading(true);
+
       setError("");
 
       const response = await loginUser({
@@ -42,22 +40,43 @@ const Login = () => {
         password: form.password,
       });
 
+      console.log(response);
+
       /*
         Backend response:
 
         {
           data:{
-             user,
-             tokens
+            user,
+            tokens:{
+              accessToken,
+              refreshToken
+            }
           }
         }
 
       */
 
-      login(response.data);
+      const data = response.data;
+
+      localStorage.setItem(
+        "accessToken",
+
+        data.tokens.accessToken,
+      );
+
+      localStorage.setItem(
+        "refreshToken",
+
+        data.tokens.refreshToken,
+      );
+
+      login(data);
 
       navigate("/dashboard");
     } catch (err) {
+      console.log(err);
+
       setError(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
@@ -65,44 +84,215 @@ const Login = () => {
   };
 
   return (
-    <AuthLayout title="Welcome Back" subtitle="Login to your OneWinq account">
-      <div className="space-y-5">
-        <ErrorMessage message={error} />
+    <div
+      className="
+      min-h-screen
+      flex
+      items-center
+      justify-center
+      px-4
+      bg-gradient-to-br
+      from-purple-100
+      via-white
+      to-purple-200
+      "
+    >
+      <div
+        className="
+        grid
+        md:grid-cols-2
+        max-w-5xl
+        w-full
+        bg-white/70
+        backdrop-blur-xl
+        shadow-2xl
+        rounded-3xl
+        overflow-hidden
+        "
+      >
+        {/* LEFT BRAND SECTION */}
 
-        <Input
-          label="Email or Phone"
-          name="identifier"
-          placeholder="Enter email or phone"
-          value={form.identifier}
-          onChange={handleChange}
-        />
-
-        <PasswordInput
-          value={form.password}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              password: e.target.value,
-            })
-          }
-        />
-
-        <Button onClick={handleLogin} disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </Button>
-
-        <button
-          onClick={() => navigate("/forgot-password")}
+        <div
           className="
-            text-sm
-            text-purple-600
-            hover:underline
+          hidden
+          md:flex
+          flex-col
+          justify-center
+          p-10
+          bg-gradient-to-br
+          from-purple-600
+          to-indigo-700
+          text-white
           "
         >
-          Forgot Password?
-        </button>
+          <h1 className="text-4xl font-bold mb-5">Welcome Back 👋</h1>
+
+          <p className="text-lg opacity-90 mb-8">
+            Login to your OneWinq account and manage your digital identity.
+          </p>
+
+          <div className="space-y-4">
+            <div className="flex gap-3">
+              <span>✓</span>
+
+              <p>Manage your profile</p>
+            </div>
+
+            <div className="flex gap-3">
+              <span>✓</span>
+
+              <p>Customize your templates</p>
+            </div>
+
+            <div className="flex gap-3">
+              <span>✓</span>
+
+              <p>Share your digital card</p>
+            </div>
+          </div>
+        </div>
+
+        {/* LOGIN FORM */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.5,
+          }}
+          className="
+          p-8
+          md:p-12
+          "
+        >
+          <h2
+            className="
+            text-3xl
+            font-bold
+            text-gray-800
+            mb-2
+            "
+          >
+            Login
+          </h2>
+
+          <p className="text-gray-500 mb-8">Access your OneWinq account</p>
+
+          {error && (
+            <p
+              className="
+              bg-red-100
+              text-red-600
+              p-3
+              rounded-lg
+              mb-4
+              text-sm
+              "
+            >
+              {error}
+            </p>
+          )}
+
+          <div className="space-y-5">
+            <input
+              name="identifier"
+              placeholder="Email or Phone"
+              value={form.identifier}
+              onChange={handleChange}
+              className="
+              w-full
+              px-4
+              py-3
+              rounded-xl
+              border
+              outline-none
+              focus:ring-2
+              focus:ring-purple-500
+              "
+            />
+
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              className="
+              w-full
+              px-4
+              py-3
+              rounded-xl
+              border
+              outline-none
+              focus:ring-2
+              focus:ring-purple-500
+              "
+            />
+
+            <div
+              className="
+              text-right
+              "
+            >
+              <button
+                onClick={() => navigate("/forgot-password")}
+                className="
+                text-purple-600
+                text-sm
+                hover:underline
+                "
+              >
+                Forgot Password?
+              </button>
+            </div>
+
+            <button
+              onClick={handleLogin}
+              disabled={loading}
+              className="
+              w-full
+              py-3
+              rounded-xl
+              bg-purple-600
+              text-white
+              font-semibold
+              hover:bg-purple-700
+              transition
+              "
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </div>
+
+          <p
+            className="
+            text-center
+            mt-6
+            text-gray-600
+            "
+          >
+            Don't have an account?
+            <span
+              onClick={() => navigate("/signup")}
+              className="
+              ml-1
+              text-purple-600
+              font-semibold
+              cursor-pointer
+              "
+            >
+              Create Account
+            </span>
+          </p>
+        </motion.div>
       </div>
-    </AuthLayout>
+    </div>
   );
 };
 

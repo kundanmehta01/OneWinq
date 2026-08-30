@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import { sendVerification } from "../../services/authService";
 
@@ -18,6 +19,7 @@ const Signup = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
+
       [e.target.name]: e.target.value,
     });
   };
@@ -26,17 +28,12 @@ const Signup = () => {
     e.preventDefault();
 
     if (!formData.email && !formData.phone) {
-      alert("Email or Phone number is required");
+      alert("Email or phone is required");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Password does not match");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      alert("Password must be minimum 8 characters");
+      alert("Passwords do not match");
       return;
     }
 
@@ -56,6 +53,7 @@ const Signup = () => {
 
       localStorage.setItem(
         "signupData",
+
         JSON.stringify({
           email: formData.email,
 
@@ -71,7 +69,7 @@ const Signup = () => {
     } catch (error) {
       console.log(error);
 
-      alert(error.response?.data?.message || "OTP send failed");
+      alert(error.response?.data?.message || "OTP sending failed");
     } finally {
       setLoading(false);
     }
@@ -80,115 +78,215 @@ const Signup = () => {
   return (
     <div
       className="
-min-h-screen
-flex
-items-center
-justify-center
-bg-gradient-to-br
-from-purple-50
-via-white
-to-purple-100
-px-4
-"
+      min-h-screen
+      flex
+      items-center
+      justify-center
+      px-4
+      bg-gradient-to-br
+      from-purple-100
+      via-white
+      to-purple-200
+      "
     >
       <div
         className="
-w-full
-max-w-md
-bg-white
-rounded-2xl
-shadow-xl
-p-8
-"
+        grid
+        md:grid-cols-2
+        max-w-5xl
+        w-full
+        bg-white/70
+        backdrop-blur-xl
+        shadow-2xl
+        rounded-3xl
+        overflow-hidden
+        "
       >
-        <h1
+        {/* LEFT SIDE */}
+
+        <div
           className="
-text-3xl
-font-bold
-text-center
-mb-6
-"
+          hidden
+          md:flex
+          flex-col
+          justify-center
+          p-10
+          bg-gradient-to-br
+          from-purple-600
+          to-indigo-700
+          text-white
+          "
         >
-          Create Account
-        </h1>
+          <h1 className="text-4xl font-bold mb-5">OneWinq</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address (optional)"
-            value={formData.email}
-            onChange={handleChange}
-            className="
-w-full
-border
-rounded-lg
-px-4
-py-3
-"
-          />
+          <p className="text-lg opacity-90 mb-8">
+            Create your digital identity and showcase yourself everywhere.
+          </p>
 
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number (optional)"
-            value={formData.phone}
-            onChange={handleChange}
-            className="
-w-full
-border
-rounded-lg
-px-4
-py-3
-"
-          />
+          <div className="space-y-4">
+            <div className="flex gap-3">
+              <span>✓</span>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="
-w-full
-border
-rounded-lg
-px-4
-py-3
-"
-          />
+              <p>Create your personal profile</p>
+            </div>
 
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-            className="
-w-full
-border
-rounded-lg
-px-4
-py-3
-"
-          />
+            <div className="flex gap-3">
+              <span>✓</span>
 
-          <button
-            disabled={loading}
+              <p>Customize digital cards</p>
+            </div>
+
+            <div className="flex gap-3">
+              <span>✓</span>
+
+              <p>Share your identity easily</p>
+            </div>
+          </div>
+        </div>
+
+        {/* SIGNUP FORM */}
+
+        <motion.form
+          onSubmit={handleSubmit}
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.5,
+          }}
+          className="
+          p-8
+          md:p-12
+          "
+        >
+          <h2
             className="
-w-full
-bg-purple-600
-text-white
-py-3
-rounded-lg
-hover:bg-purple-700
-"
+            text-3xl
+            font-bold
+            text-gray-800
+            mb-2
+            "
           >
-            {loading ? "Sending OTP..." : "Continue"}
-          </button>
-        </form>
+            Create Account
+          </h2>
+
+          <p className="text-gray-500 mb-8">Join OneWinq today</p>
+
+          <div className="space-y-4">
+            <input
+              name="email"
+              type="email"
+              placeholder="Email address"
+              value={formData.email}
+              onChange={handleChange}
+              className="
+              w-full
+              px-4
+              py-3
+              rounded-xl
+              border
+              outline-none
+              focus:ring-2
+              focus:ring-purple-500
+              "
+            />
+
+            <input
+              name="phone"
+              placeholder="Phone number (optional)"
+              value={formData.phone}
+              onChange={handleChange}
+              className="
+              w-full
+              px-4
+              py-3
+              rounded-xl
+              border
+              outline-none
+              focus:ring-2
+              focus:ring-purple-500
+              "
+            />
+
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="
+              w-full
+              px-4
+              py-3
+              rounded-xl
+              border
+              outline-none
+              focus:ring-2
+              focus:ring-purple-500
+              "
+            />
+
+            <input
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="
+              w-full
+              px-4
+              py-3
+              rounded-xl
+              border
+              outline-none
+              focus:ring-2
+              focus:ring-purple-500
+              "
+            />
+
+            <button
+              disabled={loading}
+              className="
+              w-full
+              py-3
+              rounded-xl
+              bg-purple-600
+              text-white
+              font-semibold
+              hover:bg-purple-700
+              transition
+              "
+            >
+              {loading ? "Sending OTP..." : "Continue"}
+            </button>
+          </div>
+
+          <p
+            className="
+            text-center
+            mt-6
+            text-gray-600
+            "
+          >
+            Already have account?
+            <span
+              onClick={() => navigate("/login")}
+              className="
+              text-purple-600
+              cursor-pointer
+              ml-1
+              font-semibold
+              "
+            >
+              Login
+            </span>
+          </p>
+        </motion.form>
       </div>
     </div>
   );
