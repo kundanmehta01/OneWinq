@@ -1,0 +1,12 @@
+import api from './api.js';
+export const getMyOrganizations = () => api.get('/organizations/my');
+export const getOrganization = (id) => api.get(`/organizations/${id}`);
+export const createOrganization = (data) => api.post('/organizations', data);
+export const updateOrganization = (id, data) => api.patch(`/organizations/${id}`, data);
+export const getDepartments = (id) => api.get(`/organizations/${id}/departments`);
+export const createDepartment = (id, data) => api.post(`/organizations/${id}/departments`, data);
+export const createTeam = (id, data) => api.post(`/organizations/${id}/teams`, data);
+export const getMembers = (id, params) => api.get(`/organizations/${id}/members`, { params });
+export const addMember = (id, data) => api.post(`/organizations/${id}/members`, data);
+export const updateMemberRole = (id, memberId, role) => api.patch(`/organizations/${id}/members/${memberId}/role`, { role });
+export const removeMember = (id, memberId) => api.delete(`/organizations/${id}/members/${memberId}`);
