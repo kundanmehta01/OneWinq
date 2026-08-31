@@ -8,6 +8,8 @@ export const createOrgSchema = z.object({
     name: z.string().min(2, 'Organization name must be at least 2 characters'),
     domain: z.string().optional(),
     logo: z.string().url().optional().or(z.literal('')),
+    title: z.string().optional(), // e.g. "Founder & CEO", "Managing Director"
+    template: z.enum(['DEFAULT', 'CEO', 'FOUNDER', 'TEAM_MEMBER']).optional(),
   }),
 });
 
