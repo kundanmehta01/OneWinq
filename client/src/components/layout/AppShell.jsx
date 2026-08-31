@@ -1,0 +1,5 @@
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { BriefcaseBusiness, Compass, LayoutDashboard, MessageCircle, Network, UserRound, CreditCard, Building2, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx';
+const links = [['/dashboard', LayoutDashboard, 'Dashboard'], ['/discover', Compass, 'Discover'], ['/connections', Network, 'Connections'], ['/messages', MessageCircle, 'Messages'], ['/profile', UserRound, 'Profile'], ['/cards', CreditCard, 'Card'], ['/organizations', Building2, 'Organizations'], ['/feed', BriefcaseBusiness, 'Feed']];
+export default function AppShell() { const { user, logout } = useAuth(); const navigate = useNavigate(); const exit = async () => { await logout(); navigate('/login'); }; return <div className="shell"><aside><NavLink to="/dashboard" className="brand">one<span>winq</span></NavLink><nav>{links.map(([to, Icon, text]) => <NavLink to={to} key={to}><Icon size={18}/>{text}</NavLink>)}</nav><div className="sidebar-footer"><p>{user?.email || user?.phone}</p><button onClick={exit}><LogOut size={17}/>Sign out</button></div></aside><main><Outlet /></main></div>; }
