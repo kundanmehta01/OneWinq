@@ -9,6 +9,8 @@ import './styles/app.css';
 import './styles/profile.css';
 import './styles/connections.css';
 import './styles/discovery.css';
+import './styles/organizations.css';
+import './styles/engagement.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode><BrowserRouter><AuthProvider><App /><Toaster position="top-right" /></AuthProvider></BrowserRouter></StrictMode>,

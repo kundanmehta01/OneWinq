@@ -1,2 +1,41 @@
-import { useEffect, useState } from 'react'; import toast from 'react-hot-toast'; import { organizationService } from '../../services/modules.js'; import { Button, Empty, Input, Loading } from '../../components/common/UI.jsx';
-export default function Organizations() { const [orgs, setOrgs] = useState(); const [name, setName] = useState(''); const load = () => organizationService.mine().then((r) => setOrgs(r.data)).catch((e) => { toast.error(e.message); setOrgs([]); }); useEffect(load, []); const create = async (e) => { e.preventDefault(); try { await organizationService.create({ name }); setName(''); toast.success('Organization created'); load(); } catch (err) { toast.error(err.message); } }; if (!orgs) return <Loading />; return <div className="page"><header><div><p className="eyebrow">Multi-tenant workspace</p><h1>Organizations</h1></div></header><form className="inline-form panel" onSubmit={create}><Input label="Organization name" value={name} onChange={(e) => setName(e.target.value)} required /><Button>Create organization</Button></form><div className="org-grid">{orgs.length ? orgs.map((item) => { const org = item.organizationId || item.organization || item; return <article className="panel" key={item._id || org._id}><h2>{org.name}</h2><p>{org.domain || 'No domain configured'}</p><span className="badge">{item.role || org.plan}</span></article>; }) : <Empty>Create your first organization to manage teams and members.</Empty>}</div></div>; }
+import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { useMyOrganizations } from "../../hooks/useOrganizations.js";
+import OrganizationCard from "../../components/organizations/OrganizationCard.jsx";
+import EmptyOrganization from "../../components/organizations/EmptyOrganization.jsx";
+import { Empty, Loading } from "../../components/common/UI.jsx";
+
+export default function Organizations() {
+  const { memberships, loading, error } = useMyOrganizations();
+
+  return (
+    <div className="page">
+      <header>
+        <div>
+          <p className="eyebrow">Multi-tenant workspace</p>
+          <h1>Organizations</h1>
+        </div>
+        <Link className="button" to="/organizations/new">
+          <Plus size={16} />
+          New organization
+        </Link>
+      </header>
+      {loading ? (
+        <Loading />
+      ) : error ? (
+        <Empty>{error}</Empty>
+      ) : memberships.length ? (
+        <div className="org-grid">
+          {memberships.map((membership) => (
+            <OrganizationCard
+              key={membership.membershipId || membership.organization?._id}
+              membership={membership}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyOrganization />
+      )}
+    </div>
+  );
+}

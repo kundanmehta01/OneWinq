@@ -1,0 +1,75 @@
+/* Organizations module */
+
+.org-card { display: grid; gap: 12px; padding: 18px; }
+.org-card-head { display: flex; align-items: center; gap: 12px; }
+.org-card-head h2 { margin: 0; font-size: 16px; }
+.org-card-head > div > span { color: #747b91; font-size: 13px; }
+.org-logo { width: 43px; height: 43px; border-radius: 12px; object-fit: cover; }
+.org-card-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.org-card > p { margin: 0; color: #747b91; font-size: 13px; }
+.org-card .button { justify-content: center; }
+
+.role-badge.role-owner { background: #f1ecff; color: #6d3fc4; }
+.role-badge.role-admin { background: #fdeaea; color: #c2453f; }
+.role-badge.role-manager { background: #e6f6ee; color: #0f8a5f; }
+.role-badge.role-member { background: #e8e8ff; color: #5552c8; }
+.role-badge.role-guest { background: #f1f2f6; color: #64748b; }
+
+.org-header { display: grid; gap: 18px; padding: 22px; margin-bottom: 22px; }
+.org-header-top { display: flex; align-items: center; gap: 14px; }
+.org-header-top h1 { margin: 0; font-size: 22px; }
+.org-header-top > div > span { color: #747b91; font-size: 13.5px; }
+.org-header-top .org-edit { margin-left: auto; }
+.org-logo.large, .avatar.large { width: 56px; height: 56px; font-size: 21px; border-radius: 16px; }
+.org-header .metrics { margin-bottom: 0; }
+
+.org-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e0e3ed; overflow-x: auto; }
+.org-tabs a { padding: 10px 12px; color: #72798d; font-weight: 650; font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; text-decoration: none; white-space: nowrap; }
+.org-tabs a.active { color: #4f4dc4; border-bottom-color: #4f4dc4; }
+
+.org-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.org-panel { padding: 20px; display: grid; gap: 14px; align-content: start; }
+.org-panel h2 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.org-panel .inline-form { margin-bottom: 0; flex-wrap: wrap; }
+
+.dept-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.dept-list li { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; background: #f7f8fc; border-radius: 10px; font-size: 14px; }
+.dept-list li span { color: #747b91; font-size: 12.5px; }
+
+.org-note { color: #747b91; font-size: 13.5px; margin: 0; }
+
+.org-form { display: grid; gap: 14px; padding: 22px; max-width: 560px; align-items: start; }
+.org-form .button { justify-self: start; }
+
+.invite-member { display: grid; gap: 12px; padding: 20px; margin-bottom: 20px; align-items: start; }
+.invite-member h2 { margin: 0; font-size: 16px; }
+.invite-member .button { justify-self: start; }
+
+.members-list { display: grid; gap: 12px; }
+.member-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
+.member-info { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.member-info span { color: #747b91; font-size: 13px; }
+.member-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.member-actions select { padding: 7px 9px; border: 1px solid #dfe2ec; border-radius: 8px; background: #fff; font-size: 13px; }
+.icon-button.danger { color: #c2453f; }
+.icon-button.danger:hover { background: #fdeaea; border-color: #f3c1bf; }
+
+.pagination { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 8px 0 2px; }
+.pagination span { color: #747b91; font-size: 13px; }
+
+.empty-organization { display: grid; justify-items: center; gap: 10px; padding: 44px 20px; text-align: center; }
+.empty-organization h2 { margin: 0; }
+.empty-organization p { margin: 0; color: #747b91; max-width: 430px; }
+.empty-organization .button { margin-top: 6px; }
+
+.org-settings { max-width: 560px; align-items: start; }
+.toggle-row { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.toggle-row input { margin-top: 3px; }
+.toggle-row span { display: grid; gap: 2px; color: #747b91; font-size: 13px; }
+.toggle-row strong { color: #1c2340; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .org-columns { grid-template-columns: 1fr; }
+  .org-header-top { flex-wrap: wrap; }
+  .org-header-top .org-edit { margin-left: 0; }
+}

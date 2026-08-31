@@ -27,7 +27,16 @@ import ExploreCards from "../pages/discovery/ExploreCards.jsx";
 import Discovery from "../pages/discovery/Discovery.jsx";
 import Messages from "../pages/messages/Messages.jsx";
 import Feed from "../pages/engagement/Feed.jsx";
+import Engagement from "../pages/engagement/Engagement.jsx";
+import Analytics from "../pages/engagement/Analytics.jsx";
+import Activity from "../pages/engagement/Activity.jsx";
+import Visitors from "../pages/engagement/Visitors.jsx";
 import Organizations from "../pages/organizations/Organizations.jsx";
+import CreateOrganization from "../pages/organizations/CreateOrganization.jsx";
+import OrganizationDetails from "../pages/organizations/OrganizationDetails.jsx";
+import EditOrganization from "../pages/organizations/EditOrganization.jsx";
+import Members from "../pages/organizations/Members.jsx";
+import OrganizationSettings from "../pages/organizations/OrganizationSettings.jsx";
 import { CardProvider } from "../context/CardContext.jsx";
 import { ConnectionProvider } from "../context/ConnectionContext.jsx";
 function Protected() {
@@ -124,7 +133,16 @@ export default function AppRoutes() {
         <Route path="/discovery/cards" element={<ExploreCards />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/feed" element={<Feed />} />
+        <Route path="/engagement" element={<Engagement />} />
+        <Route path="/engagement/analytics" element={<Analytics />} />
+        <Route path="/engagement/activity" element={<Activity />} />
+        <Route path="/engagement/visitors" element={<Visitors />} />
         <Route path="/organizations" element={<Organizations />} />
+        <Route path="/organizations/new" element={<CreateOrganization />} />
+        <Route path="/organizations/:id" element={<OrganizationDetails />} />
+        <Route path="/organizations/:id/edit" element={<EditOrganization />} />
+        <Route path="/organizations/:id/members" element={<Members />} />
+        <Route path="/organizations/:id/settings" element={<OrganizationSettings />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

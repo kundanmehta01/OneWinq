@@ -1,0 +1,59 @@
+.engagement-page > header { flex-wrap: wrap; }
+.engagement-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e0e3ed; }
+.engagement-tabs a { padding: 10px 12px; color: #72798d; font-weight: 650; font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.engagement-tabs a.active { color: #4f4dc4; border-bottom-color: #4f4dc4; }
+.engagement-stats { margin-top: 4px; }
+
+.composer-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.composer-row input, .composer-row select { flex: 1; min-width: 170px; border: 1px solid #dce0eb; border-radius: 8px; padding: 10px 11px; color: #172033; background: white; outline-color: #6366f1; }
+.composer-row .button { flex: 0 0 auto; }
+
+.post-delete { justify-self: end; grid-row: 1; border: 0; background: transparent; color: #8a91a5; padding: 4px; border-radius: 6px; display: inline-flex; }
+.post-delete:hover { color: #d64545; background: #fdeeee; }
+.post-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.button.liked { color: white; background: #5351d9; border-color: transparent; }
+
+.comment-thread { display: grid; gap: 10px; border-top: 1px solid #eef0f5; padding-top: 14px; margin-top: 4px; }
+.comment-thread form { display: flex; gap: 9px; }
+.comment-thread form input { flex: 1; border: 1px solid #dce0eb; border-radius: 8px; padding: 9px 11px; outline-color: #6366f1; }
+.comment { display: grid; gap: 2px; background: #f7f8fc; border-radius: 10px; padding: 10px 12px; }
+.comment strong { font-size: 13px; }
+.comment span { color: #747b91; font-size: 12px; }
+.comment p { margin: 4px 0 0; line-height: 1.5; }
+
+.activity-list { display: grid; gap: 14px; max-width: 760px; }
+.activity-card { display: grid; gap: 10px; }
+.activity-card-head { display: flex; align-items: center; gap: 12px; }
+.activity-card-head > div { flex: 1; display: grid; gap: 2px; }
+.activity-card-head span { color: #747b91; font-size: 13px; }
+.activity-card p { margin: 0; line-height: 1.6; white-space: pre-wrap; }
+.activity-card footer { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: #747b91; font-size: 13px; }
+.empty-activity { max-width: 560px; display: grid; gap: 12px; justify-items: center; text-align: center; padding: 40px 26px; }
+.empty-activity h2 { margin: 0; }
+.empty-activity p { margin: 0; color: #747b91; }
+
+.visitor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+.visitor-card { display: flex; align-items: center; gap: 12px; }
+.visitor-card > div { display: grid; gap: 2px; min-width: 0; }
+.visitor-card strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.visitor-card span { color: #747b91; font-size: 13px; }
+
+.engagement-chart { max-width: 860px; }
+.chart { display: grid; gap: 13px; margin-top: 4px; }
+.chart-row { display: grid; grid-template-columns: minmax(140px, 260px) 1fr auto; align-items: center; gap: 12px; font-size: 13px; }
+.chart-row p { margin: 0; color: #444b61; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chart-bar { display: flex; height: 14px; border-radius: 7px; background: #f1f2f8; overflow: hidden; }
+.chart-bar i { display: block; height: 100%; }
+.chart-bar i.likes { background: #5351d9; }
+.chart-bar i.comments { background: #a5a4f2; }
+.chart-row > span { color: #747b91; font-weight: 650; }
+.chart-legend { display: flex; gap: 18px; margin-top: 16px; color: #747b91; font-size: 12px; }
+.chart-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+.chart-legend i.likes { background: #5351d9; }
+.chart-legend i.comments { background: #a5a4f2; }
+
+@media (max-width: 780px) {
+  .engagement-tabs { width: 100%; overflow-x: auto; }
+  .chart-row { grid-template-columns: 1fr; gap: 5px; }
+  .chart-row > span { justify-self: end; }
+}
