@@ -1,2 +1,23 @@
-import { Link } from 'react-router-dom';
-export default function AuthLayout({ title, subtitle, children, footer }) { return <div className="auth-page"><section className="auth-panel"><Link to="/login" className="brand">one<span>winq</span></Link><h1>{title}</h1><p>{subtitle}</p>{children}{footer && <div className="auth-footer">{footer}</div>}</section><aside className="auth-aside"><p>One identity. Every professional interaction.</p><span>Build your profile, network, card and team in one connected workspace.</span></aside></div>; }
+import { Link } from "react-router-dom";
+
+export default function AuthLayout({ title, subtitle, children, footer }) {
+  return (
+    <div className="auth-page">
+      <section className="auth-panel">
+        <Link to="/login" className="brand">
+          one<span>winq</span>
+        </Link>
+        <h1>{title}</h1>
+        <p>{subtitle}</p>
+        {children}
+        {footer && <div className="auth-footer">{footer}</div>}
+      </section>
+      <aside className="auth-aside">
+        <p>One identity. Every professional interaction.</p>
+        <span>
+          Build your profile, network, card and team in one connected workspace.
+        </span>
+      </aside>
+    </div>
+  );
+}
