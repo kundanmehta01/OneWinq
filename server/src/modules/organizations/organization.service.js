@@ -25,14 +25,26 @@ export class OrganizationService {
       ownerId,
     });
 
+    const ownerTitle = data.title?.trim() || 'Founder & CEO';
+
     // Auto-create OWNER membership for the creator
     await Membership.create({
       organizationId: organization._id,
       userId: ownerId,
       role: OrgRole.OWNER,
-      title: 'Founder / Organization Owner',
+      title: ownerTitle,
       status: 'ACTIVE',
     });
+
+    // Automatically link the organization and title to the user's personal profile
+    await Profile.findOneAndUpdate(
+      { userId: ownerId },
+      {
+        organizationId: organization._id,
+        designation: ownerTitle,
+        template: data.template || (ownerTitle.toLowerCase().includes('ceo') ? 'CEO' : 'FOUNDER'),
+      }
+    );
 
     return organization;
   }
