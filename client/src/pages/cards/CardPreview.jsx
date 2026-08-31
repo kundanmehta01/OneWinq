@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getPublicCard } from "../../services/cardService.js";
 import CardTemplate from "../../components/cards/CardTemplate.jsx";
 import { Empty, Loading } from "../../components/common/UI.jsx";
+import { resolveProfileName } from "../../utils/name.js";
 export default function CardPreview() {
   const { slug } = useParams();
   const [card, setCard] = useState();
@@ -19,9 +20,13 @@ export default function CardPreview() {
       </div>
     );
   if (!card) return <Loading />;
+  const fallbackName = resolveProfileName(
+    card?.profileId || card?.profile || {},
+    null
+  );
   return (
     <div className="public-card-page">
-      <CardTemplate card={card} preview />
+      <CardTemplate card={card} fallbackName={fallbackName} />
     </div>
   );
 }

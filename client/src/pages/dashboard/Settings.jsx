@@ -1,15 +1,44 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Bell, KeyRound, LogOut, Share2 } from "lucide-react";
 import { profileService, cardService } from "../../services/modules.js";
 import { Button, Input, Loading, Select } from "../../components/common/UI.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 
+const NOTIF_KEY = "onewinq_notifications";
+const defaultNotifications = {
+  connectionRequests: true,
+  messages: true,
+  profileViews: false,
+  weeklyDigest: false,
+};
+
+function loadNotifications() {
+  try {
+    return {
+      ...defaultNotifications,
+      ...JSON.parse(localStorage.getItem(NOTIF_KEY) || "{}"),
+    };
+  } catch {
+    return defaultNotifications;
+  }
+}
+
+const notificationOptions = [
+  ["connectionRequests", "Connection requests", "When someone wants to connect with you"],
+  ["messages", "Messages", "When a conversation gets a new reply"],
+  ["profileViews", "Profile views", "When your profile appears in someone's activity"],
+  ["weeklyDigest", "Weekly digest", "A summary of your growth every week"],
+];
+
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [card, setCard] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [notifications, setNotifications] = useState(loadNotifications);
 
   useEffect(() => {
     profileService
@@ -56,12 +85,27 @@ export default function Settings() {
       contact: { ...profile.contact, [key]: value },
     });
 
+  const toggleNotification = (key) => {
+    const next = { ...notifications, [key]: !notifications[key] };
+    setNotifications(next);
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(next));
+    toast.success("Notification preference saved");
+  };
+
+  const signOut = async () => {
+    await logout();
+    navigate("/login");
+  };
+
   return (
     <div className="dashboard-page settings-page">
       <header>
         <div>
-          <h1>Profile settings</h1>
-          <p>Control discovery, contact details and how your card is shared.</p>
+          <h1>Settings</h1>
+          <p>
+            Control discovery, contact details, notifications and how your
+            card is shared.
+          </p>
         </div>
       </header>
 
@@ -75,6 +119,14 @@ export default function Settings() {
           <div>
             <span>Login phone</span>
             <strong>{user?.phone || "Not set"}</strong>
+          </div>
+          <div>
+            <span>Email verified</span>
+            <strong>{user?.emailVerified ? "Yes" : "No"}</strong>
+          </div>
+          <div>
+            <span>Phone verified</span>
+            <strong>{user?.phoneVerified ? "Yes" : "No"}</strong>
           </div>
           <div>
             <span>Role</span>
@@ -169,6 +221,81 @@ export default function Settings() {
         <Button onClick={save} disabled={saving}>
           {saving ? "Saving…" : "Save settings"}
         </Button>
+      </section>
+
+      <section className="panel settings-form">
+        <h2>
+          <Bell size={16} /> Notifications
+        </h2>
+        <p className="field-hint">
+          These preferences are stored on this device.
+        </p>
+        {notificationOptions.map(([key, label, hint]) => (
+          <label className="toggle notif-row" key={key}>
+            <input
+              type="checkbox"
+              checked={Boolean(notifications[key])}
+              onChange={() => toggleNotification(key)}
+            />
+            <span>
+              {label}
+              <small>{hint}</small>
+            </span>
+          </label>
+        ))}
+      </section>
+
+      <section className="panel settings-form">
+        <h2>
+          <KeyRound size={16} /> Security
+        </h2>
+        <div className="detail-list">
+          <div>
+            <span>Password</span>
+            <strong>••••••••</strong>
+          </div>
+        </div>
+        <p className="field-hint">
+          Resetting your password signs every device out of your account.
+        </p>
+        <div className="settings-actions">
+          <Link className="button secondary" to="/forgot-password">
+            <KeyRound size={15} /> Reset password
+          </Link>
+          <button className="button secondary" type="button" onClick={signOut}>
+            <LogOut size={15} /> Sign out
+          </button>
+        </div>
+      </section>
+
+      <section className="panel settings-form">
+        <h2>
+          <Share2 size={16} /> Your public links
+        </h2>
+        <div className="detail-list">
+          <div>
+            <span>Public profile</span>
+            <strong>
+              {profile.slug ? (
+                <Link to={`/profiles/${profile.slug}`}>
+                  /profiles/{profile.slug}
+                </Link>
+              ) : (
+                "Not ready"
+              )}
+            </strong>
+          </div>
+          <div>
+            <span>Digital card</span>
+            <strong>
+              {card?.slug ? (
+                <Link to={`/cards/${card.slug}`}>/cards/{card.slug}</Link>
+              ) : (
+                "Provisioning"
+              )}
+            </strong>
+          </div>
+        </div>
       </section>
     </div>
   );

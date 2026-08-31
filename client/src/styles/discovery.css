@@ -1,1 +1,28 @@
 .discovery-page{max-width:1100px}.discovery-page>header p{color:#747b91;margin:9px 0 0}.discovery-search{display:flex;gap:10px;align-items:end;max-width:690px;margin:25px 0}.discovery-search .field{flex:1}.discovery-home-actions{display:flex;gap:10px}.discovery-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px}.filter-panel{height:min-content;padding:18px;background:#fff;border:1px solid #e5e7ef;border-radius:13px;display:grid;gap:13px}.filter-panel h2{margin:0}.filter-panel>label{font-size:13px;font-weight:650;color:#444b61}.category-filter{display:flex;gap:7px;flex-wrap:wrap;margin:17px 0}.filter-panel .category-filter{margin:0}.category-filter button{padding:7px 10px;border:1px solid #dde1eb;border-radius:16px;background:#fff;color:#60697e;font-size:12px}.category-filter button.active{color:#504dc3;border-color:#c9c8ff;background:#eeeeff}.discovery-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.discovery-user-card,.card-result-card{padding:20px;border:1px solid #e4e7ef;border-radius:13px;background:#fff}.discovery-user-card .avatar{margin-bottom:14px}.discovery-user-card h3{margin:0 0 6px}.discovery-user-card p{margin:0 0 4px;color:#626a80}.discovery-user-card small{color:#8a91a4}.result-skills{display:flex;gap:5px;flex-wrap:wrap;margin-top:14px}.result-skills span{padding:4px 7px;color:#5754bd;background:#ededff;border-radius:12px;font-size:11px}.result-actions{display:flex;gap:8px;margin-top:17px}.result-actions .button{flex:1}.discovery-empty{padding:42px 20px;border:1px dashed #ccd1e0;border-radius:14px;background:#fff;text-align:center}.discovery-empty p{margin:0 0 15px;color:#71798e}.card-discovery-notice{display:grid;grid-template-columns:240px 1fr;gap:15px;align-items:center}.card-result-card{color:#4e4bc4}.card-result-card h3{color:#20283b}.card-result-card p{color:#70788d;font-size:13px;line-height:1.5}@media(max-width:720px){.discovery-layout,.card-discovery-notice{grid-template-columns:1fr}.filter-panel{grid-template-columns:1fr 1fr}.filter-panel h2{grid-column:1/-1}.filter-panel .category-filter{grid-column:1/-1}.discovery-search{align-items:stretch}.discovery-search .button{margin-bottom:0}}@media(max-width:480px){.discovery-search,.discovery-home-actions{flex-direction:column}.discovery-search .button,.discovery-home-actions .button{width:100%}.filter-panel{grid-template-columns:1fr}}
+
+/* ---- Discover home page ---- */
+.discover-home{max-width:1100px}
+.discover-hero h1{max-width:640px}
+.discover-hero>p{color:#747b91;margin:10px 0 0;max-width:560px}
+.discover-block{margin-top:30px}
+.heading-link{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:#5351d9}
+.discover-topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.topic-tile{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff;border:1px solid #e7e9f1;border-radius:12px;color:#3f4573;font-size:14px;font-weight:600;transition:border-color .15s,background .15s}
+.topic-tile svg{color:#5351d9;flex:0 0 auto}
+.topic-tile:hover{border-color:#c9c8ff;background:#f6f6ff;color:#4e4bc4}
+.discover-features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}
+.feature-card{display:flex;align-items:center;gap:14px;padding:20px;background:#fff;border:1px solid #e7e9f1;border-radius:14px;color:#20283b;transition:border-color .15s}
+.feature-card>svg:first-child{color:#5351d9;flex:0 0 auto}
+.feature-card>div{flex:1;display:grid;gap:3px}
+.feature-card strong{font-size:15px}
+.feature-card span{color:#747b91;font-size:13px}
+.feature-card>svg:last-child{color:#a0a5ba;flex:0 0 auto}
+.feature-card:hover{border-color:#c9c8ff}
+.discover-steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.discover-steps-grid>div{display:grid;gap:6px;justify-items:start;padding:18px;background:#fff;border:1px solid #e7e9f1;border-radius:13px}
+.discover-steps-grid svg{color:#5351d9}
+.discover-steps-grid strong{font-size:14px}
+.discover-steps-grid span{color:#747b91;font-size:13px}
+.discovery-user-card.skeleton{min-height:150px;border:1px solid #eef0f6;background:linear-gradient(90deg,#f3f4f9,#fafbff,#f3f4f9);background-size:200% 100%;animation:shimmer 1.2s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+@media(max-width:720px){.discover-features,.discover-steps-grid{grid-template-columns:1fr}}

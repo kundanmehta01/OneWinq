@@ -7,11 +7,11 @@ const links = [
 ];
 export default function Sidebar() {
   return (
-    <nav className="dashboard-sidebar">
+    <nav className="dashboard-subnav" aria-label="Dashboard sections">
       {links.map(([to, Icon, text, end]) => (
         <NavLink end={end} to={to} key={to}>
-          <Icon size={17} />
-          {text}
+          <Icon size={16} />
+          <span>{text}</span>
         </NavLink>
       ))}
     </nav>

@@ -50,12 +50,18 @@ export default function Signup() {
     const target = email || phone;
     setBusy(true);
     try {
-      await authService.sendVerification({ target, type });
+      const result = await authService.sendVerification({ target, type });
       sessionStorage.setItem("signup_email", email);
       sessionStorage.setItem("signup_phone", phone);
       sessionStorage.setItem("signup_target", target);
       sessionStorage.setItem("signup_password", form.password);
       sessionStorage.setItem("verification_type", type);
+      sessionStorage.setItem("signup_otp_sent_at", String(Date.now()));
+      if (result.data?.devOtp) {
+        sessionStorage.setItem("signup_dev_otp", result.data.devOtp);
+      } else {
+        sessionStorage.removeItem("signup_dev_otp");
+      }
       toast.success(`Verification code sent to ${target}`);
       navigate("/verify");
     } catch (err) {

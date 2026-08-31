@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 import SocialLinks from "./SocialLinks.jsx";
-export default function ProfileInfo({ profile }) {
+
+export default function ProfileInfo({ profile, publicView = false }) {
   const sections = [
     ["About", profile.about],
     [
@@ -15,6 +17,12 @@ export default function ProfileInfo({ profile }) {
         .join("\n"),
     ],
   ];
+  const hasContent =
+    profile.introduction ||
+    profile.skills?.length > 0 ||
+    sections.some(([, content]) => content) ||
+    profile.socialLinks?.length > 0;
+
   return (
     <div className="profile-info">
       {profile.introduction && (
@@ -40,6 +48,19 @@ export default function ProfileInfo({ profile }) {
           ),
       )}
       <SocialLinks links={profile.socialLinks} />
+      {!hasContent &&
+        (publicView ? (
+          <div className="profile-empty public">
+            <p>This profile is just getting started. Check back soon.</p>
+          </div>
+        ) : (
+          <div className="profile-empty">
+            <p>Your profile is empty — add a headline, skills and story to stand out.</p>
+            <Link className="button primary" to="/profile/edit">
+              Complete your profile
+            </Link>
+          </div>
+        ))}
     </div>
   );
 }

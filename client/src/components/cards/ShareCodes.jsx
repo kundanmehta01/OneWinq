@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "../common/UI.jsx";
+import { cardShareUrl, qrImageUrl } from "./shareUtils.js";
 
 const CODE39 = {
   0: "nnnwwnwnn",
@@ -53,7 +54,7 @@ function barcodeValue(slug = "") {
   return cleaned || "ONEWINQ";
 }
 
-function Code39({ value }) {
+export function Code39({ value, className = "code39" }) {
   const encoded = `*${barcodeValue(value)}*`;
   const modules = [];
   [...encoded].forEach((char, index) => {
@@ -72,7 +73,7 @@ function Code39({ value }) {
   let x = 0;
   return (
     <svg
-      className="code39"
+      className={className}
       viewBox={`0 0 ${width} 60`}
       role="img"
       aria-label={`Barcode ${encoded}`}
@@ -92,19 +93,12 @@ function Code39({ value }) {
   );
 }
 
-export function cardShareUrl(slug) {
-  if (!slug) return "";
-  return `${window.location.origin}/cards/${slug}`;
-}
-
-export function qrImageUrl(data) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(data)}`;
-}
-
 export default function ShareCodes({ card, onEnable }) {
   const [creating, setCreating] = useState(false);
+  const barcodeWrapRef = useRef(null);
   const shareUrl = cardShareUrl(card?.slug);
   const qrSrc = useMemo(() => (shareUrl ? qrImageUrl(shareUrl) : ""), [shareUrl]);
+  const barcodeEnabled = Boolean(card?.layout?.showQRCode);
 
   const createCodes = async () => {
     if (!card) return;
@@ -117,15 +111,13 @@ export default function ShareCodes({ card, onEnable }) {
             showHeadline: true,
             showSocialLinks: true,
             showServices: true,
-            showQRCode: true,
             customColor: "#6366F1",
             ...card.layout,
             showQRCode: true,
           },
         });
       }
-      if (card.slug) localStorage.setItem(`onewinq_barcode_${card.slug}`, "1");
-      toast.success("Barcode created for your digital card");
+      toast.success("Barcode is active on your digital card");
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -142,13 +134,29 @@ export default function ShareCodes({ card, onEnable }) {
     }
   };
 
+  const downloadBarcode = () => {
+    const svg = barcodeWrapRef.current?.querySelector("svg");
+    if (!svg) return;
+    const source = new XMLSerializer().serializeToString(svg);
+    const blob = new Blob(
+      [`<?xml version="1.0" encoding="UTF-8"?>\n${source}`],
+      { type: "image/svg+xml;charset=utf-8" }
+    );
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `onewinq-barcode-${card.slug}.svg`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (!card) {
     return (
       <section className="panel share-codes">
         <h2>Digital barcode</h2>
         <p>
-          Your barcode is created with the digital card when the profile is
-          provisioned. Come back after signup completes.
+          Your barcode is created automatically with the digital card when your
+          profile is provisioned. It will appear here shortly.
         </p>
       </section>
     );
@@ -159,10 +167,17 @@ export default function ShareCodes({ card, onEnable }) {
       <div className="section-heading">
         <div>
           <h2>Card barcode</h2>
-          <p>Scan the QR or barcode to open your public digital card.</p>
+          <p>
+            Created automatically with your profile. Scan the QR or barcode to
+            open your public digital card.
+          </p>
         </div>
         <Button onClick={createCodes} disabled={creating} type="button">
-          {creating ? "Creating…" : "Create / refresh barcode"}
+          {creating
+            ? "Saving…"
+            : barcodeEnabled
+              ? "Refresh barcode"
+              : "Create barcode"}
         </Button>
       </div>
       {shareUrl ? (
@@ -177,12 +192,19 @@ export default function ShareCodes({ card, onEnable }) {
               <Button variant="secondary" onClick={copyLink} type="button">
                 Copy link
               </Button>
-              <a className="button secondary" href={qrSrc} download={`onewinq-${card.slug}.png`}>
+              <a
+                className="button secondary"
+                href={qrSrc}
+                download={`onewinq-${card.slug}.png`}
+              >
                 Download QR
               </a>
+              <Button variant="secondary" onClick={downloadBarcode} type="button">
+                Download barcode
+              </Button>
             </div>
           </div>
-          <figure className="barcode-figure">
+          <figure className="barcode-figure" ref={barcodeWrapRef}>
             <Code39 value={card.slug} />
             <figcaption>Barcode · {card.slug}</figcaption>
           </figure>

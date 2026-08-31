@@ -3,12 +3,14 @@ import Sidebar from "./Sidebar.jsx";
 import Navbar from "./Navbar.jsx";
 export default function DashboardLayout() {
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <section className="dashboard-content">
-        <Navbar />
+    <div className="dashboard-shell">
+      <Navbar />
+      <div className="dashboard-subnav-bar">
+        <Sidebar />
+      </div>
+      <div className="dashboard-body">
         <Outlet />
-      </section>
+      </div>
     </div>
   );
 }

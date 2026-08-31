@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { messageService } from "../../services/modules.js";
@@ -17,14 +17,28 @@ const displayName = (profile) =>
   profile?.contact?.email ||
   "Conversation";
 
+function formatWhen(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  const now = new Date();
+  const sameDay = date.toDateString() === now.toDateString();
+  if (sameDay) {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+  return date.toLocaleDateString([], { day: "numeric", month: "short" });
+}
+
 export default function Messages() {
   const [conversations, setConversations] = useState();
   const [connections, setConnections] = useState([]);
   const [active, setActive] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [loadingThread, setLoadingThread] = useState(false);
   const [text, setText] = useState("");
   const [compose, setCompose] = useState({ recipientId: "", content: "" });
   const [starting, setStarting] = useState(false);
+  const [sending, setSending] = useState(false);
+  const bubblesRef = useRef(null);
   const { user } = useAuth();
 
   const loadInbox = async () => {
@@ -34,14 +48,33 @@ export default function Messages() {
   };
 
   useEffect(() => {
-    loadInbox().catch((error) => {
-      toast.error(error.message);
-      setConversations([]);
-    });
-    getConnections()
-      .then((result) => setConnections(result.data.items || []))
-      .catch(() => setConnections([]));
+    let cancelled = false;
+    const bootstrap = async () => {
+      try {
+        const result = await messageService.conversations();
+        if (!cancelled) setConversations(result.data.items);
+      } catch (error) {
+        if (!cancelled) {
+          toast.error(error.message);
+          setConversations([]);
+        }
+      }
+      try {
+        const result = await getConnections();
+        if (!cancelled) setConnections(result.data.items || []);
+      } catch {
+        if (!cancelled) setConnections([]);
+      }
+    };
+    bootstrap();
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  useEffect(() => {
+    bubblesRef.current?.scrollTo({ top: bubblesRef.current.scrollHeight });
+  }, [messages, active]);
 
   const activeIds = useMemo(() => {
     const ids = new Set();
@@ -59,24 +92,38 @@ export default function Messages() {
 
   const select = async (conversation) => {
     setActive(conversation);
+    setLoadingThread(true);
     try {
       const result = await messageService.messages(conversation._id);
       setMessages(result.data.items);
+      // Fetching messages marks the conversation read on the server,
+      // so clear the badge locally without waiting for a refetch.
+      setConversations((current = []) =>
+        current.map((item) =>
+          item._id === conversation._id ? { ...item, unreadCount: 0 } : item
+        )
+      );
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoadingThread(false);
     }
   };
 
   const reply = async (event) => {
     event.preventDefault();
-    if (!text.trim()) return;
+    if (!text.trim() || sending) return;
+    setSending(true);
     try {
       await messageService.reply(active._id, text.trim());
       setText("");
-      await select(active);
+      const result = await messageService.messages(active._id);
+      setMessages(result.data.items);
       await loadInbox();
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setSending(false);
     }
   };
 
@@ -141,7 +188,10 @@ export default function Messages() {
               >
                 <option value="">Select a connection</option>
                 {startable.map((item) => (
-                  <option key={item.connectionId || otherUserId(item)} value={otherUserId(item)}>
+                  <option
+                    key={item.connectionId || otherUserId(item)}
+                    value={otherUserId(item)}
+                  >
                     {displayName(item.user)}
                   </option>
                 ))}
@@ -193,6 +243,11 @@ export default function Messages() {
                   )}
                 </strong>
                 <span>{conversation.lastMessage?.content}</span>
+                {conversation.lastMessage?.sentAt && (
+                  <small className="thread-time">
+                    {formatWhen(conversation.lastMessage.sentAt)}
+                  </small>
+                )}
               </button>
             ))
           ) : (
@@ -205,20 +260,24 @@ export default function Messages() {
               <div className="thread-title">
                 {displayName(active.participant)}
               </div>
-              <div className="bubbles">
-                {messages.map((message) => (
-                  <p
-                    className={
+              <div className="bubbles" ref={bubblesRef}>
+                {loadingThread ? (
+                  <p className="empty">Loading messages…</p>
+                ) : messages.length ? (
+                  messages.map((message) => {
+                    const mine =
                       String(message.senderId?._id || message.senderId) ===
-                      String(user?._id)
-                        ? "mine"
-                        : ""
-                    }
-                    key={message._id}
-                  >
-                    {message.content}
-                  </p>
-                ))}
+                      String(user?._id);
+                    return (
+                      <p className={mine ? "mine" : ""} key={message._id}>
+                        {message.content}
+                        <small>{formatWhen(message.createdAt)}</small>
+                      </p>
+                    );
+                  })
+                ) : (
+                  <p className="empty">No messages yet — say hello.</p>
+                )}
               </div>
               <form onSubmit={reply}>
                 <input
@@ -227,7 +286,9 @@ export default function Messages() {
                   placeholder="Write a message"
                   onChange={(event) => setText(event.target.value)}
                 />
-                <Button>Send</Button>
+                <Button disabled={sending}>
+                  {sending ? "Sending…" : "Send"}
+                </Button>
               </form>
             </>
           ) : (

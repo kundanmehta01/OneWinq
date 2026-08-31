@@ -1,7 +1,7 @@
 import ProfileSection from "./ProfileSection.jsx";
 import SocialLinks from "./SocialLinks.jsx";
 import { CardQrMark } from "./ShareCodes.jsx";
-export default function CardTemplate({ card, preview = false }) {
+export default function CardTemplate({ card, fallbackName }) {
   const profile = card?.profileId || card?.profile || {};
   const layout = card?.layout || {};
   const color = layout.customColor || "#6366f1";
@@ -13,7 +13,7 @@ export default function CardTemplate({ card, preview = false }) {
       <div className="card-brand">
         one<span>winq</span>
       </div>
-      <ProfileSection profile={profile} layout={layout} />
+      <ProfileSection profile={profile} layout={layout} fallbackName={fallbackName} />
       {layout.showServices && profile.services?.length > 0 && (
         <div className="card-services">
           {profile.services.map((service) => (
